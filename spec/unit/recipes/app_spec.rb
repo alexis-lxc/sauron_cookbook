@@ -83,6 +83,16 @@ describe 'sauron_cookbook::app' do
     end
   end
 
+  context 'tar extract' do
+    it 'creates a source directory to extract to if one doesn\'t exist.' do
+      chef_run = @runner.converge(described_recipe)
+      expect(chef_run).to create_directory('/opt/my_app/0.0.1-pre-alpha').with(
+                            owner:     'my_app',
+                            recursive: true,
+                            group:     'my_app')
+    end
+  end
+
   context 'When all attributes are default, on Ubuntu 16.04' do
     let(:chef_run) do
       runner = ChefSpec::SoloRunner.new(platform: 'ubuntu', version: '16.04') do |node|

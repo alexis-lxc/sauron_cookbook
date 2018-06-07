@@ -54,3 +54,10 @@ directory "/var/run/#{app_name}" do
   action :create
 end
 
+tar_extract release_file  do
+  target_dir "/opt/#{app_name}/#{release_name}"
+  download_dir "/opt/#{app_name}"
+  creates "#{release_name}/Gemfile"
+  user "#{app_name}"
+  group "#{app_name}"
+end

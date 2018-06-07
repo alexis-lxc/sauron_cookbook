@@ -5,3 +5,5 @@ DEPENDENCIES
 
 GRAPH
   sauron_cookbook (0.0.1)
+    tar (>= 0.0.0)
+  tar (2.1.1)
