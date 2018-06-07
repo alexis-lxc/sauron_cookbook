@@ -1,0 +1,7 @@
+DEPENDENCIES
+  sauron_cookbook
+    path: .
+    metadata: true
+
+GRAPH
+  sauron_cookbook (0.0.1)
