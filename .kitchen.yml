@@ -1,0 +1,45 @@
+---
+driver:
+  name: vagrant
+  network:
+     - ["forwarded_port", {guest: 3100, host: 3100}]
+
+provisioner:
+  name: chef_zero
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu/bionic64
+
+suites:
+  - name: default
+    run_list:
+      - recipe[sauron_cookbook::postgresql_server]
+      - recipe[sauron_cookbook::app]
+    verifier:
+      inspec_tests:
+        - test/integration/default
+    attributes:
+        {
+        app_name: 'sauron',
+        command_name: 'puma -C /etc/puma/sauron.rb',
+        sauron_script_location: '/opt/sauron/sauron_start.sh',
+        database_root_password: 'test123',
+        postgres_server_version: '9.5',
+        app_db_user: 'sauron',
+        app_db_password: 'test123',
+        app_db_name: 'sauron',
+        environment_variables: {
+          RAILS_ENV: 'production',
+          DB_HOST: 'localhost',
+          DB_NAME: 'sauron',
+          DB_USER: 'sauron',
+          DB_PASSWORD: 'test123',
+          DB_POOL: 10,
+          SECRET_KEY_BASE: '1717bbda4c96905c541f53c672f96951b2b72ef32094aedc1ec31e1d0787df1900d3a25dffef204c90fe632bfe420516db07a88071e278f7cb0585e948f9a904',
+          RAILS_SERVE_STATIC_FILES: true,
+          RAILS_LOG_TO_STDOUT: true
+          }
+    }

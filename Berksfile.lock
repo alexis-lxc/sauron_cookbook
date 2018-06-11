@@ -1,9 +1,23 @@
 DEPENDENCIES
+  postgresql (~> 7.0.0)
   sauron_cookbook
     path: .
     metadata: true
 
 GRAPH
+  build-essential (8.1.1)
+    mingw (>= 1.1)
+    seven_zip (>= 0.0.0)
+  mingw (2.0.2)
+    seven_zip (>= 0.0.0)
+  openssl (8.1.2)
+  postgresql (7.0.0)
+    build-essential (>= 2.0.0)
+    openssl (>= 4.0)
   sauron_cookbook (0.0.1)
+    postgresql (>= 0.0.0)
     tar (>= 0.0.0)
+  seven_zip (3.0.0)
+    windows (>= 0.0.0)
   tar (2.1.1)
+  windows (4.2.5)

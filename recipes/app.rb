@@ -3,6 +3,9 @@ github_repo = 'alexis-lxc/sauron'
 release_name = Github.release_name(github_repo)
 release_file = Github.release_file(github_repo)
 
+sauron_script_location = node['sauron_script_location']
+command_name = node['command_name']
+
 apt_repository 'brightbox-ruby' do
   uri 'ppa:brightbox/ruby-ng'
 end
@@ -11,7 +14,7 @@ apt_update 'update' do
   action :update
 end
 
-package %w(software-properties-common ruby2.4 ruby2.4-dev nodejs build-essential patch ruby-dev zlib1g-dev liblzma-dev libpq-dev ruby-switch) do
+package %w(software-properties-common ruby2.5 ruby2.5-dev nodejs build-essential patch ruby-dev zlib1g-dev liblzma-dev libpq-dev) do
   action :install
 end
 
@@ -54,10 +57,71 @@ directory "/var/run/#{app_name}" do
   action :create
 end
 
+file "/etc/default/#{app_name}.conf" do
+  owner app_name
+  group app_name
+  content node['environment_variables'].map {|k,v| "#{k}=#{v}"}.join("\n")
+end
+
+file "/etc/default/#{app_name}.conf.tmp" do
+  owner app_name
+  group app_name
+  content node['environment_variables'].map {|k,v| "export #{k}=#{v}"}.join("\n")
+end
+
 tar_extract release_file  do
   target_dir "/opt/#{app_name}/#{release_name}"
   download_dir "/opt/#{app_name}"
   creates "#{release_name}/Gemfile"
   user "#{app_name}"
   group "#{app_name}"
+end
+
+link "/opt/#{app_name}/#{app_name}"  do
+  to "/opt/#{app_name}/#{release_name}"
+  action :create
+  user app_name
+  group app_name
+end
+
+template "/etc/puma/#{app_name}.rb" do
+  source "puma.conf.erb"
+  owner app_name
+  group app_name
+  variables( 
+    app_name: app_name,
+    app_home: app_name
+  )
+  mode "400"
+end
+
+template sauron_script_location do
+  source "sauron_script.sh.erb"
+  mode   "0755"
+  owner app_name
+  group app_name
+  variables( app_name: app_name, app_home: app_name, command_name: command_name )
+  notifies :restart, "service[puma]", :delayed
+end
+
+template "/etc/systemd/system/puma.service" do
+  source "systemd.erb"
+  owner app_name
+  group app_name
+  mode "00644"
+  variables( app_name: app_name, app_home: app_name, sauron_script_location: sauron_script_location )
+  notifies :run, "execute[systemctl-daemon-reload]", :immediately
+  notifies :restart, "service[puma]", :delayed
+end
+
+
+
+execute 'systemctl-daemon-reload' do
+  command '/bin/systemctl --system daemon-reload'
+end
+
+service "puma" do
+  supports :status => true, :start => true, :restart => true, :stop => true
+  provider Chef::Provider::Service::Systemd
+  action [:enable, :restart]
 end
