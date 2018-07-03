@@ -17,7 +17,9 @@ suites:
   - name: default
     run_list:
       - recipe[sauron_cookbook::postgresql_server]
+      - recipe[sauron_cookbook::redis_server]
       - recipe[sauron_cookbook::app]
+      - recipe[sauron_cookbook::sidekiq]
     verifier:
       inspec_tests:
         - test/integration/default
@@ -25,7 +27,9 @@ suites:
         {
         app_name: 'sauron',
         command_name: 'puma -C /etc/puma/sauron.rb',
+        sidekiq_command_name: 'sidekiq',
         sauron_script_location: '/opt/sauron/sauron_start.sh',
+        sidekiq_script_location: '/opt/sauron/sidekiq_start.sh',
         database_root_password: 'test123',
         postgres_server_version: '9.5',
         app_db_user: 'sauron',
@@ -40,6 +44,9 @@ suites:
           DB_POOL: 10,
           SECRET_KEY_BASE: '1717bbda4c96905c541f53c672f96951b2b72ef32094aedc1ec31e1d0787df1900d3a25dffef204c90fe632bfe420516db07a88071e278f7cb0585e948f9a904',
           RAILS_SERVE_STATIC_FILES: true,
-          RAILS_LOG_TO_STDOUT: true
+          RAILS_LOG_TO_STDOUT: true,
+          SIDEKIQ_POLL_INTERVAL: 5,
+          SIDEKIQ_REDIS_URL: redis://localhost:6379,
+          WAIT_INTERVAL_FOR_STARTING_CONTAINER: 15
           }
     }

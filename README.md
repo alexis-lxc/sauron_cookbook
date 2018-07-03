@@ -11,7 +11,7 @@ This cookbook has two recipes:
 
 ## Required Attributes:
 
-### For recipe **app.rb*** 
+### For recipe **app.rb** 
 
 * app_name => name of the app e.g. sauron
 * command_name =>  this is the command used to run service e.g puma -C /etc/puma/sauron.rb
@@ -19,7 +19,7 @@ This cookbook has two recipes:
 * sauron_script_location => this is the location of the script file which will have commands to be executed before we run the service.
 
 
-### For recipe postgresql_server
+### For recipe **postgresql_server**
 
 * database_root_password
 * app_db_user
@@ -33,11 +33,9 @@ This cookbook has two recipes:
 ### This cookbook does not run migration, for now in order to run migration follow following:
 
 * Login to the box one which service is running
-* Go to the app user home directory and run the following command:
+* Go to the app user home directory and run the following commands:
 
-```. /etc/default/sauron.conf.tmp bundle exec rake db:migrate```
-
-
+```. /etc/default/sauron.conf.tmp && cd $HOME/$USER && bundle exec rake db:migrate```
 
 ### How to setup locally:
 

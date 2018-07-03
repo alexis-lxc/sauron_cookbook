@@ -1,0 +1,10 @@
+#!/usr/bin/env sidekiq
+
+directory '/opt/<%= @app_home %>/<%= @app_name %>'
+environment 'production'
+pidfile '/var/run/<%= @app_name %>/<%= @app_name %>_sidekiq.pid'
+state_path '/var/run/<%= @app_name %>/<%= @app_name %>_sidekiq.state'
+
+on_restart do
+puts 'On Sidekiq restart...'
+end
