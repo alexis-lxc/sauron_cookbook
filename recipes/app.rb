@@ -49,6 +49,13 @@ directory "/etc/puma" do
   action :create
 end
 
+directory "/opt/#{app_name}/.config/lxc" do
+  owner app_name
+  group app_name
+  recursive true
+  action :create
+end
+
 directory "/var/run/#{app_name}" do
   owner app_name
   group app_name
@@ -114,10 +121,14 @@ template "/etc/systemd/system/puma.service" do
   notifies :restart, "service[puma]", :delayed
 end
 
-
-
 execute 'systemctl-daemon-reload' do
   command '/bin/systemctl --system daemon-reload'
+end
+
+execute 'create-client-certificates' do
+  user app_name
+  cwd "/opt/#{app_name}/.config/lxc"
+  command 'openssl req -new -newkey rsa:4096 -days 50000 -nodes -x509 -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com" -keyout client.key  -out client.crt'
 end
 
 service "puma" do
