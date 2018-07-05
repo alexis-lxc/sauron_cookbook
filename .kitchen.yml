@@ -47,6 +47,6 @@ suites:
           RAILS_LOG_TO_STDOUT: true,
           SIDEKIQ_POLL_INTERVAL: 5,
           SIDEKIQ_REDIS_URL: 'redis://localhost:6379',
-          WAIT_INTERVAL_FOR_STARTING_CONTAINER: 15
+          WAIT_INTERVAL_FOR_CONTAINER_OPERATIONS: 15
           }
     }
