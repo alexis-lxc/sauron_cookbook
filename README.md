@@ -8,7 +8,6 @@ This cookbook has two recipes:
 * postgresql_server.rb => This installs postgres server, setup root user with passowrd, create user for app with a password and also creates a database with service.
 
 
-
 ## Required Attributes:
 
 ### For recipe **app.rb** 
@@ -26,6 +25,16 @@ This cookbook has two recipes:
 * app_db_name
 * app_db_name
 
+### For recipe **redis_server**
+* None
+
+### For recipe **sidekiq**
+
+Set the following env variables:
+
+* SIDEKIQ_REDIS_URL
+* SIDEKIQ_POLL_INTERVAL
+* WAIT_INTERVAL_FOR_CONTAINER_OPERATIONS
 
 
 ## IMPORTANT
